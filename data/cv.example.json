@@ -1,0 +1,150 @@
+{
+  "personal": {
+    "name": "Mustafa Dinç",
+    "title": {
+      "tr": "Yazılım Mühendisi",
+      "en": "Software Engineer"
+    },
+    "contact": {
+      "phone": "+90 530 123 67 01",
+      "email": "mustafa.din066@gmail.com",
+      "linkedin": "https://www.linkedin.com/in/mustafadinc06/",
+      "github": "https://github.com/conny0506"
+    }
+  },
+  "summary": {
+    "tr": "Türk Hava Kurumu Üniversitesi Yazılım Mühendisliği bölümünde 4. sınıf öğrencisiyim ve Haziran 2026'da mezun olacağım. DevOps, siber güvenlik, gömülü yazılım (Embedded Linux) ve full-stack geliştirme alanlarında çalışıyorum. C/C++ ve C# ile nesne yönelimli, modüler ve katmanlı mimariler geliştiriyor; Android tarafında Kotlin ile sistem entegrasyonlu uygulamalar üretiyorum. React/.NET tabanlı web projeleri ile REST API entegrasyonları, MySQL/PostgreSQL/MongoDB üzerinde veri modelleme ve raporlama çıktıları (Excel/Word/PDF) geliştirme deneyimine sahibim. Docker ve CI/CD pratikleriyle SDLC süreçlerine katkı sağlıyor, Git ile sürüm kontrolü ve ekip çalışmasına uyumlu şekilde ilerliyorum. TUSAŞ & GENÇ MÜSİAD IDEA4Defence yarışmasında, TUSAŞ tarafından onaylanan modüler bir sistemin yazılım geliştirme çalışmalarında görev alarak ekipçe 1.'lik ödülü kazandım; proje TÜBİTAK işbirliğiyle biyoteknoloji odağında devam etmektedir.",
+    "en": "I am a 4th-year Software Engineering student at Turkish Aeronautical Association University, graduating in June 2026. I work across DevOps, cybersecurity, embedded software (Embedded Linux) and full-stack development. I build object-oriented, modular and layered architectures in C/C++ and C#, and develop system-integrated Android applications in Kotlin. I have hands-on experience integrating REST APIs in React/.NET web projects, modelling data on MySQL/PostgreSQL/MongoDB, and producing reporting output (Excel/Word/PDF). I contribute to the SDLC with Docker and CI/CD practices, and collaborate using Git in line with team workflows. With my team I won 1st place at the TUSAŞ & GENÇ MÜSİAD IDEA4Defence competition by working on the software development of a TUSAŞ-approved modular system; the project is currently continuing with TÜBİTAK in a biotechnology-focused direction."
+  },
+  "education": [
+    {
+      "school": "Türk Hava Kurumu Üniversitesi",
+      "degree": {
+        "tr": "Yazılım Mühendisliği Lisans Derecesi",
+        "en": "B.Sc. in Software Engineering"
+      },
+      "start": "2021",
+      "end": "Halen"
+    },
+    {
+      "school": "Mehmet Çelikel Anadolu Lisesi",
+      "degree": { "tr": "Lise", "en": "High School" },
+      "start": "2016",
+      "end": "2020"
+    }
+  ],
+  "experience": [
+    {
+      "company": "Ülgen AR-GE (Okul AR-GE Grubu)",
+      "role": {
+        "tr": "Nesne Tabanlı Gömülü Yazılım Mühendisi",
+        "en": "Object-Oriented Embedded Software Engineer"
+      },
+      "start": "2024",
+      "end": "Halen",
+      "bullets": {
+        "tr": [
+          "C++ ve C# ile OOP prensiplerine uygun, modüler ve sürdürülebilir gömülü yazılımlar geliştirdim; katmanlı mimari ve algoritma tasarımıyla okunabilirlik ve performansı artırdım.",
+          "Embedded Linux üzerinde çalışan uygulamalar geliştirdim; donanımla etkileşim gerektiren bileşenler, cihaz UI ve sistem entegrasyonu üzerinde çalıştım.",
+          "Git ile versiyon kontrol, Agile/Scrum ekip çalışması; CI/CD ve temel DevOps pratikleriyle SDLC'ye katkı sağladım."
+        ],
+        "en": [
+          "Built modular, maintainable embedded software in C++ and C# following OOP principles; improved readability and performance through layered architecture and algorithm design.",
+          "Developed applications running on Embedded Linux; worked on hardware-interacting components, device UI, and system integration.",
+          "Contributed to the SDLC with Git version control, Agile/Scrum teamwork, and CI/CD plus core DevOps practices."
+        ]
+      }
+    },
+    {
+      "company": "ASTOR Enerji A.Ş.",
+      "role": {
+        "tr": "Stajyer Yazılım Geliştirici",
+        "en": "Software Developer Intern"
+      },
+      "start": "Haziran 2025",
+      "end": "Temmuz 2025",
+      "bullets": {
+        "tr": [
+          "C# ve WinForms ile şirket içi süreçleri destekleyen masaüstü uygulamalar geliştirdim; kullanıcı dostu arayüzlerle operasyonel verimliliğe katkı sağladım.",
+          "MySQL ile veritabanı tasarımı, CRUD işlemleri ve veri bütünlüğü yönetimi yaptım; uygulama–veritabanı entegrasyonunu güvenli ve performanslı şekilde kurdum.",
+          "Mevcut yazılımlarda hata ayıklama/iyileştirme ve yeni özellik geliştirme yaptım; kullanıcı geri bildirimleriyle stabiliteyi artırdım."
+        ],
+        "en": [
+          "Built C# WinForms desktop applications supporting in-house processes, contributing to operational efficiency with user-friendly interfaces.",
+          "Designed MySQL databases, implemented CRUD operations and managed data integrity; established secure and performant application–database integration.",
+          "Performed debugging/improvement and new-feature development on existing software, increasing stability through user feedback."
+        ]
+      }
+    }
+  ],
+  "awards": [
+    {
+      "title": "IDEA4Defence (TUSAŞ & GENÇ MÜSİAD) — 1.'lik Ödülü",
+      "date": "Aralık 2025",
+      "bullets": {
+        "tr": [
+          "TUSAŞ İHA platformları için tasarlanan ve TUSAŞ tarafından onaylanan modüler bir sistemin yazılım geliştirme çalışmalarında görev aldım.",
+          "Operasyon yönetimi için web tabanlı admin paneli tasarladım: cihaz/görev yönetimi, canlı KPI takibi, alarm yönetimi, rol bazlı yetkilendirme ve denetim (audit) akışları.",
+          "Görev sonunda otomatik PDF/CSV raporlama kurguladım; sıcaklık uygunluğu, sağlamlık (şok/titreşim), güvenlik/tamper ve enerji metriklerini rapor çıktısına dönüştürdüm.",
+          "Taşıma kalitesini ölçmek için algoritma tasarımlarına katkı sağladım: sıcaklık kontrolü, darbe-titreşim sağlamlık skoru, parametre profiline göre Organ Condition Score (0-100), acil durum paraşüt/atma karar mantığı (çoklu sensör doğrulama, fail-safe, immutable log).",
+          "Proje TÜBİTAK işbirliğiyle biyoteknoloji departmanı üzerinden organ araştırmaları odağında devam etmektedir."
+        ],
+        "en": [
+          "Contributed to the software development of a modular system designed for TUSAŞ UAV platforms and approved by TUSAŞ.",
+          "Designed a web-based admin panel for operations: device/mission management, live KPI tracking, alarm management, role-based authorization and audit flows.",
+          "Built automatic PDF/CSV reporting after each mission, turning temperature compliance, robustness (shock/vibration), security/tamper and energy metrics into report output.",
+          "Contributed to algorithm designs measuring transport quality: temperature control, shock-vibration robustness score, Organ Condition Score (0-100) by parameter profile, emergency parachute/release decision logic (multi-sensor validation, fail-safe, immutable log).",
+          "The project continues with TÜBİTAK in collaboration with the biotechnology department, focused on organ research."
+        ]
+      }
+    }
+  ],
+  "skills": [
+    {
+      "label": { "tr": "Programlama Dilleri", "en": "Programming Languages" },
+      "items": ["C#", "C", "C++", "Python", "Kotlin", "Java", "JavaScript", "TypeScript", "SQL"]
+    },
+    {
+      "label": { "tr": "Frontend", "en": "Frontend" },
+      "items": ["React", "Next.js", "HTML5", "CSS3", "Tailwind CSS", "Bootstrap", "Material UI"]
+    },
+    {
+      "label": { "tr": "Backend & API", "en": "Backend & API" },
+      "items": [".NET", "Node.js", "Flask", "FastAPI", "REST API"]
+    },
+    {
+      "label": { "tr": "Mobil", "en": "Mobile" },
+      "items": ["Android (Android SDK)", "Android Jetpack"]
+    },
+    {
+      "label": { "tr": "Veritabanı", "en": "Databases" },
+      "items": ["MySQL", "PostgreSQL", "MongoDB", "Room DB"]
+    },
+    {
+      "label": { "tr": "DevOps & Cloud", "en": "DevOps & Cloud" },
+      "items": ["Docker", "CI/CD", "Google Cloud Platform", "Git/GitHub"]
+    },
+    {
+      "label": { "tr": "Gömülü & Sistem", "en": "Embedded & Systems" },
+      "items": ["Embedded Linux", "OOP", "Layered Architecture", "Algorithm Design"]
+    },
+    {
+      "label": { "tr": "Test & Araçlar", "en": "Tools & Testing" },
+      "items": ["JUnit", "Visual Studio", "VS Code", "IntelliJ", "PyCharm", "Android Studio", "Eclipse"]
+    },
+    {
+      "label": { "tr": "Veri / Görüntü İşleme", "en": "Data / Image Processing" },
+      "items": ["NumPy", "pandas", "Matplotlib", "OpenCV", "ML Kit (Custom ML)"]
+    }
+  ],
+  "languages": [
+    {
+      "name": { "tr": "Türkçe", "en": "Turkish" },
+      "level": { "tr": "Ana dil", "en": "Native" }
+    },
+    {
+      "name": { "tr": "İngilizce", "en": "English" },
+      "level": { "tr": "İleri seviye okuma-yazma", "en": "Advanced reading & writing" }
+    }
+  ]
+}
