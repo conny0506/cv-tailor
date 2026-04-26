@@ -5,6 +5,7 @@ import { analyzeJob } from "@/lib/jobAnalyzer";
 import { selectProjects } from "@/lib/projectSelector";
 import { findGaps } from "@/lib/skillGap";
 import { Generation } from "@/lib/schema";
+import type { UsageAccumulator } from "@/lib/claude";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -30,9 +31,16 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const analysis = await analyzeJob(jobText);
-    const projects = await selectProjects({ cache, analysis, targetLanguage: language });
-    const gaps = await findGaps({ cv, cache, analysis, selected: projects });
+    const usage: UsageAccumulator = {
+      input_tokens: 0,
+      output_tokens: 0,
+      cache_creation_tokens: 0,
+      cache_read_tokens: 0,
+    };
+
+    const analysis = await analyzeJob(jobText, usage);
+    const projects = await selectProjects({ cache, analysis, targetLanguage: language, usageAccumulator: usage });
+    const gaps = await findGaps({ cv, cache, analysis, selected: projects, usageAccumulator: usage });
 
     const gen: Generation = {
       id: randomUUID(),
@@ -43,6 +51,7 @@ export async function POST(req: NextRequest) {
       analysis,
       projects,
       gaps,
+      usage,
     };
     await writeGeneration(gen);
 

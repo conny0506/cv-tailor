@@ -1,5 +1,31 @@
 import { notFound } from "next/navigation";
 import { readGeneration } from "@/lib/storage";
+import type { TokenUsage } from "@/lib/schema";
+
+// Sonnet 4.6 fiyatları ($/1M token)
+const PRICE_INPUT = 3.0;
+const PRICE_OUTPUT = 15.0;
+const PRICE_CACHE_WRITE = 3.75;
+const PRICE_CACHE_READ = 0.30;
+
+function calcCost(u: TokenUsage): number {
+  const billableInput = u.input_tokens - u.cache_creation_tokens - u.cache_read_tokens;
+  return (
+    (billableInput / 1_000_000) * PRICE_INPUT +
+    (u.cache_creation_tokens / 1_000_000) * PRICE_CACHE_WRITE +
+    (u.cache_read_tokens / 1_000_000) * PRICE_CACHE_READ +
+    (u.output_tokens / 1_000_000) * PRICE_OUTPUT
+  );
+}
+
+function fmt(n: number): string {
+  return n.toLocaleString("tr-TR");
+}
+
+function fmtCost(usd: number): string {
+  if (usd < 0.01) return `$${(usd * 100).toFixed(2)}¢`;
+  return `$${usd.toFixed(3)}`;
+}
 
 export const dynamic = "force-dynamic";
 
@@ -114,12 +140,55 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
         )}
       </section>
 
+      {gen.usage && (
+        <section className="bg-white border border-slate-200 rounded p-5 space-y-3">
+          <h2 className="font-semibold text-sm">Gerçek Token Kullanımı</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+            <Stat label="Input" value={fmt(gen.usage.input_tokens)} />
+            <Stat label="Output" value={fmt(gen.usage.output_tokens)} />
+            <Stat
+              label="Cache yazma"
+              value={fmt(gen.usage.cache_creation_tokens)}
+              dim={gen.usage.cache_creation_tokens === 0}
+            />
+            <Stat
+              label="Cache okuma"
+              value={fmt(gen.usage.cache_read_tokens)}
+              dim={gen.usage.cache_read_tokens === 0}
+            />
+          </div>
+          <div className="flex items-center justify-between border-t border-slate-100 pt-3">
+            <div>
+              <div className="text-xs text-slate-400">Bu üretimin maliyeti</div>
+              <div className="text-xl font-bold text-slate-800">{fmtCost(calcCost(gen.usage))}</div>
+            </div>
+            <a
+              href="https://console.anthropic.com/settings/billing"
+              target="_blank"
+              rel="noreferrer"
+              className="text-xs text-blue-600 underline hover:text-blue-800"
+            >
+              Kalan bakiye → console.anthropic.com
+            </a>
+          </div>
+        </section>
+      )}
+
       <details className="bg-white border border-slate-200 rounded p-4">
         <summary className="font-semibold text-sm cursor-pointer">
           İlan metni ({gen.job_text.length} karakter)
         </summary>
         <pre className="text-xs whitespace-pre-wrap mt-3 text-slate-700">{gen.job_text}</pre>
       </details>
+    </div>
+  );
+}
+
+function Stat({ label, value, dim }: { label: string; value: string; dim?: boolean }) {
+  return (
+    <div className={`bg-slate-50 rounded p-3 ${dim ? "opacity-40" : ""}`}>
+      <div className="text-xs text-slate-500 mb-1">{label}</div>
+      <div className="font-mono font-semibold text-slate-800 text-sm">{value}</div>
     </div>
   );
 }

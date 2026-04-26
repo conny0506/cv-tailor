@@ -25,12 +25,24 @@ npm run dev
 
 1. **Ayarlar** sayfası → "GitHub'ı Senkronla" → `data/github_cache.json` oluşur (public repolar + README'ler).
 2. **Yeni CV Üret** → ilanı yapıştır + dil + şablon seç → ≈30 sn'de sonuç.
-3. **Sonuç** sayfası → eşleşen anahtar kelimeler, seçilen projeler, skill-gap önerileri, PDF/HTML çıktı.
+3. **Sonuç** sayfası → eşleşen anahtar kelimeler, seçilen projeler, skill-gap önerileri, PDF/HTML çıktı, gerçek token kullanımı.
+
+## Token Kullanımı & Maliyet
+
+Her CV üretiminde 3 ayrı API çağrısı yapılır (ilan analizi → proje seçimi → skill-gap). İlan metnini yapıştırdıktan sonra **üretim başlamadan** tahmini token sayısı ve maliyet gösterilir. Üretim tamamlanınca sonuç sayfasında gerçek kullanım (input/output/cache token ayrımıyla birlikte) ve kesin maliyet görüntülenir.
+
+| Çağrı | İçerik |
+|---|---|
+| `analyzeJob` | İlan analizi — rol, skill'ler, ATS keyword'lar |
+| `selectProjects` | README cache'ten 3-5 proje seçimi (ephemeral prompt cache) |
+| `findGaps` | Eksik skill tespiti + proje önerileri |
+
+Kalan API bakiyesini görmek için → [console.anthropic.com/settings/billing](https://console.anthropic.com/settings/billing)
 
 ## Mimari
 
 - **Next.js 16** (App Router) + TypeScript + Tailwind CSS 4.
-- **Claude Sonnet 4.6** (`claude-sonnet-4-6`) + prompt caching → README cache tek bir efemeral block olarak gönderilir, ardışık çağrılarda %90 ucuz.
+- **Sonnet 4.6** API + prompt caching → README cache tek bir ephemeral block olarak gönderilir, ardışık çağrılarda ~%90 daha ucuz.
 - **Octokit** ile GitHub repo + README fetch.
 - **Puppeteer** (Chromium) ile HTML şablon → PDF.
 - **Zod** ile uçtan uca tip güvenliği (CV şeması, JD analizi, proje, skill-gap).
@@ -54,7 +66,7 @@ ATS şablonu LinkedIn Easy Apply / Workday / Eightfold AI gibi sistemler için t
 
 - `data/cv.json` — sabit CV verileri (kişisel bilgi içerir, commit etme).
 - `data/github_cache.json` — sync edilmiş repo + README cache.
-- `data/generations/<uuid>.json` — her üretimin tam çıktısı (analiz + projeler + gap).
+- `data/generations/<uuid>.json` — her üretimin tam çıktısı (analiz + projeler + gap + token kullanımı).
 
 ## Hallüsinasyon Koruması
 

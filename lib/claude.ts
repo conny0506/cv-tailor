@@ -1,6 +1,13 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { z, ZodSchema } from "zod";
 
+export interface UsageAccumulator {
+  input_tokens: number;
+  output_tokens: number;
+  cache_creation_tokens: number;
+  cache_read_tokens: number;
+}
+
 export const MODEL = "claude-sonnet-4-6";
 
 let _client: Anthropic | null = null;
@@ -24,6 +31,7 @@ interface ToolCallOptions<T> {
   schema: ZodSchema<T>;
   inputSchema: Record<string, unknown>;
   maxTokens?: number;
+  usageAccumulator?: UsageAccumulator;
 }
 
 /**
@@ -63,6 +71,14 @@ export async function structuredCall<T>(opts: ToolCallOptions<T>): Promise<T> {
     ],
     tool_choice: { type: "tool", name: opts.toolName },
   });
+
+  if (opts.usageAccumulator) {
+    opts.usageAccumulator.input_tokens += res.usage.input_tokens;
+    opts.usageAccumulator.output_tokens += res.usage.output_tokens;
+    const u = res.usage as unknown as Record<string, number>;
+    opts.usageAccumulator.cache_creation_tokens += u.cache_creation_input_tokens ?? 0;
+    opts.usageAccumulator.cache_read_tokens += u.cache_read_input_tokens ?? 0;
+  }
 
   const toolUse = res.content.find((b) => b.type === "tool_use");
   if (!toolUse || toolUse.type !== "tool_use") {

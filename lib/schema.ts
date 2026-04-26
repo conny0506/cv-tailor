@@ -108,6 +108,14 @@ export const SkillGapItem = z.object({
 });
 export type SkillGapItem = z.infer<typeof SkillGapItem>;
 
+export const TokenUsage = z.object({
+  input_tokens: z.number(),
+  output_tokens: z.number(),
+  cache_creation_tokens: z.number(),
+  cache_read_tokens: z.number(),
+});
+export type TokenUsage = z.infer<typeof TokenUsage>;
+
 export const Generation = z.object({
   id: z.string(),
   created_at: z.string(),
@@ -117,5 +125,6 @@ export const Generation = z.object({
   analysis: JobAnalysis,
   projects: z.array(SelectedProject),
   gaps: z.array(SkillGapItem),
+  usage: TokenUsage.optional(),
 });
 export type Generation = z.infer<typeof Generation>;

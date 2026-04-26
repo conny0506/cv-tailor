@@ -1,4 +1,4 @@
-import { structuredCall } from "./claude";
+import { structuredCall, UsageAccumulator } from "./claude";
 import { GithubCache, JobAnalysis, SelectedProject } from "./schema";
 import { z } from "zod";
 
@@ -28,6 +28,7 @@ export async function selectProjects(opts: {
   cache: GithubCache;
   analysis: JobAnalysis;
   targetLanguage: "tr" | "en";
+  usageAccumulator?: UsageAccumulator;
 }): Promise<SelectedProject[]> {
   const readmeBlock = buildReadmeBlock(opts.cache);
 
@@ -57,6 +58,7 @@ Select 3-5 most relevant projects from the portfolio above. Return them via the 
     toolName: "return_selected_projects",
     toolDescription: "Return the selected and rewritten projects for the resume.",
     schema: ProjectsArray,
+    usageAccumulator: opts.usageAccumulator,
     inputSchema: {
       properties: {
         projects: {

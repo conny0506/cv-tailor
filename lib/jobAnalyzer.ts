@@ -1,15 +1,16 @@
-import { structuredCall } from "./claude";
+import { structuredCall, UsageAccumulator } from "./claude";
 import { JobAnalysis } from "./schema";
 
 const SYSTEM = `You are an expert technical recruiter. Given a job posting (in any language), extract a structured analysis. Be precise: list ONLY the technical skills/tools/languages explicitly stated. Do not invent. Distinguish "must have" (required, mandatory, "şart") from "nice to have" (preferred, plus, "tercih sebebi"). Detect the language the posting is written in.`;
 
-export async function analyzeJob(jobText: string): Promise<JobAnalysis> {
+export async function analyzeJob(jobText: string, usageAccumulator?: UsageAccumulator): Promise<JobAnalysis> {
   return structuredCall({
     system: SYSTEM,
     user: `<job_posting>\n${jobText}\n</job_posting>`,
     toolName: "return_job_analysis",
     toolDescription: "Return a structured analysis of the job posting.",
     schema: JobAnalysis,
+    usageAccumulator,
     inputSchema: {
       properties: {
         role: { type: "string", description: "Job title, e.g. 'Junior Backend Engineer'" },

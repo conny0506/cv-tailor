@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { structuredCall } from "./claude";
+import { structuredCall, UsageAccumulator } from "./claude";
 import { BaseCV, GithubCache, JobAnalysis, SelectedProject, SkillGapItem } from "./schema";
 
 const SYSTEM = `You are a career coach for a software engineering student. Given a target job posting and the candidate's actual portfolio (CV skills + GitHub READMEs), identify which required or preferred skills are MISSING. For each missing skill, propose ONE small, concrete portfolio project the candidate could ship in 1-3 weeks to credibly demonstrate it.
@@ -32,6 +32,7 @@ export async function findGaps(opts: {
   cache: GithubCache;
   analysis: JobAnalysis;
   selected: SelectedProject[];
+  usageAccumulator?: UsageAccumulator;
 }): Promise<SkillGapItem[]> {
   const inventory = buildPortfolioInventory(opts.cv, opts.cache, opts.selected);
 
@@ -51,6 +52,7 @@ Identify up to 5 missing skills with concrete project suggestions (in Turkish).`
     toolName: "return_skill_gaps",
     toolDescription: "Return missing skills with project suggestions.",
     schema: GapsArray,
+    usageAccumulator: opts.usageAccumulator,
     inputSchema: {
       properties: {
         gaps: {
