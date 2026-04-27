@@ -1,17 +1,6 @@
-import puppeteer, { Browser } from "puppeteer";
 import { renderAts } from "./templates/ats";
 import { renderVisual } from "./templates/visual";
 import { BaseCV, Generation } from "./schema";
-
-let _browser: Browser | null = null;
-async function getBrowser(): Promise<Browser> {
-  if (_browser && _browser.connected) return _browser;
-  _browser = await puppeteer.launch({
-    headless: true,
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
-  });
-  return _browser;
-}
 
 export function renderHtml(cv: BaseCV, gen: Generation): string {
   return gen.template === "visual" ? renderVisual({ cv, gen }) : renderAts({ cv, gen });
@@ -19,7 +8,25 @@ export function renderHtml(cv: BaseCV, gen: Generation): string {
 
 export async function renderPdf(cv: BaseCV, gen: Generation): Promise<Uint8Array> {
   const html = renderHtml(cv, gen);
-  const browser = await getBrowser();
+
+  let browser;
+
+  if (process.env.VERCEL) {
+    const chromium = (await import("@sparticuz/chromium")).default;
+    const { default: puppeteerCore } = await import("puppeteer-core");
+    browser = await puppeteerCore.launch({
+      args: chromium.args,
+      executablePath: await chromium.executablePath(),
+      headless: true,
+    });
+  } else {
+    const { default: puppeteer } = await import("puppeteer");
+    browser = await puppeteer.launch({
+      headless: true,
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    });
+  }
+
   const page = await browser.newPage();
   try {
     await page.setContent(html, { waitUntil: "networkidle0" });
@@ -31,5 +38,6 @@ export async function renderPdf(cv: BaseCV, gen: Generation): Promise<Uint8Array
     return pdf;
   } finally {
     await page.close();
+    await browser.close();
   }
 }
