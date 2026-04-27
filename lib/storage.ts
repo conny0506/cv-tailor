@@ -15,9 +15,34 @@ async function ensureDir(p: string) {
   await fs.mkdir(p, { recursive: true });
 }
 
-async function kv() {
-  const mod = await import("@vercel/kv");
-  return mod.kv;
+async function redis() {
+  const { default: Redis } = await import("ioredis");
+  return new Redis(process.env.REDIS_URL!);
+}
+
+async function redisGet<T>(key: string): Promise<T | null> {
+  const client = await redis();
+  try {
+    const raw = await client.get(key);
+    if (!raw) return null;
+    return JSON.parse(raw) as T;
+  } finally {
+    client.disconnect();
+  }
+}
+
+async function redisSet(key: string, value: unknown, exSeconds?: number): Promise<void> {
+  const client = await redis();
+  try {
+    const raw = JSON.stringify(value);
+    if (exSeconds) {
+      await client.setex(key, exSeconds, raw);
+    } else {
+      await client.set(key, raw);
+    }
+  } finally {
+    client.disconnect();
+  }
 }
 
 // ─── CV ──────────────────────────────────────────────────────────────────────
@@ -41,8 +66,8 @@ export async function writeBaseCV(cv: BaseCV) {
 // ─── GitHub Cache ─────────────────────────────────────────────────────────────
 export async function readGithubCache(): Promise<GithubCache | null> {
   if (IS_VERCEL) {
-    const db = await kv();
-    return await db.get<GithubCache>("github_cache");
+    const data = await redisGet<GithubCache>("github_cache");
+    return data;
   }
   try {
     const raw = await fs.readFile(CACHE_PATH, "utf8");
@@ -54,8 +79,7 @@ export async function readGithubCache(): Promise<GithubCache | null> {
 
 export async function writeGithubCache(cache: GithubCache) {
   if (IS_VERCEL) {
-    const db = await kv();
-    await db.set("github_cache", cache);
+    await redisSet("github_cache", cache);
     return;
   }
   await ensureDir(ROOT);
@@ -65,8 +89,7 @@ export async function writeGithubCache(cache: GithubCache) {
 // ─── Generations ──────────────────────────────────────────────────────────────
 export async function readGeneration(id: string): Promise<Generation | null> {
   if (IS_VERCEL) {
-    const db = await kv();
-    return await db.get<Generation>(`gen:${id}`);
+    return await redisGet<Generation>(`gen:${id}`);
   }
   try {
     const raw = await fs.readFile(path.join(GEN_DIR, `${id}.json`), "utf8");
@@ -78,9 +101,8 @@ export async function readGeneration(id: string): Promise<Generation | null> {
 
 export async function writeGeneration(gen: Generation) {
   if (IS_VERCEL) {
-    const db = await kv();
     // 7 gün TTL — eski üretimler otomatik silinir
-    await db.set(`gen:${gen.id}`, gen, { ex: 60 * 60 * 24 * 7 });
+    await redisSet(`gen:${gen.id}`, gen, 60 * 60 * 24 * 7);
     return;
   }
   await ensureDir(GEN_DIR);
@@ -88,7 +110,7 @@ export async function writeGeneration(gen: Generation) {
 }
 
 export async function listGenerations(): Promise<Generation[]> {
-  if (IS_VERCEL) return []; // KV'de listing desteklenmiyor
+  if (IS_VERCEL) return [];
   try {
     const files = await fs.readdir(GEN_DIR);
     const items = await Promise.all(
