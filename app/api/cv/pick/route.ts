@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
-import { randomUUID } from "node:crypto";
-import { readGithubCache, writeGeneration } from "@/lib/storage";
+import { createHash } from "node:crypto";
+import { readGeneration, readGithubCache, writeGeneration } from "@/lib/storage";
 import { writeProjects } from "@/lib/projectWriter";
 import { Generation } from "@/lib/schema";
 import type { UsageAccumulator } from "@/lib/claude";
@@ -9,18 +9,36 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 120;
 
+function pickId(repoNames: string[], language: string, template: string): string {
+  const sorted = [...repoNames].sort();
+  const key = `pick:${language}:${template}:${sorted.join(",")}`;
+  const hash = createHash("sha256").update(key).digest("hex").slice(0, 24);
+  return `pick-${hash}`;
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const repoNames: string[] = Array.isArray(body.repo_names) ? body.repo_names : [];
     const language = body.language === "en" ? "en" : "tr";
     const template = body.template === "visual" ? "visual" : "ats";
+    const force = body.force === true;
 
     if (repoNames.length === 0) {
       return Response.json({ error: "En az 1 proje seçmelisiniz." }, { status: 400 });
     }
     if (repoNames.length > 6) {
       return Response.json({ error: "En fazla 6 proje seçebilirsiniz." }, { status: 400 });
+    }
+
+    const id = pickId(repoNames, language, template);
+
+    // Önbellek kontrolü — aynı seçim daha önce üretildiyse Claude'u tekrar çağırma
+    if (!force) {
+      const existing = await readGeneration(id);
+      if (existing) {
+        return Response.json({ id: existing.id, cached: true });
+      }
     }
 
     const cache = await readGithubCache();
@@ -46,7 +64,7 @@ export async function POST(req: NextRequest) {
     const projects = await writeProjects({ repos: selectedRepos, targetLanguage: language, usageAccumulator: usage });
 
     const gen: Generation = {
-      id: randomUUID(),
+      id,
       created_at: new Date().toISOString(),
       language,
       template,
@@ -56,7 +74,7 @@ export async function POST(req: NextRequest) {
     };
     await writeGeneration(gen);
 
-    return Response.json({ id: gen.id });
+    return Response.json({ id: gen.id, cached: false });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
     console.error("[pick]", err);

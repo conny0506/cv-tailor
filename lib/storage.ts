@@ -101,8 +101,8 @@ export async function readGeneration(id: string): Promise<Generation | null> {
 
 export async function writeGeneration(gen: Generation) {
   if (IS_VERCEL) {
-    // 7 gün TTL — eski üretimler otomatik silinir
-    await redisSet(`gen:${gen.id}`, gen, 60 * 60 * 24 * 7);
+    // 30 gün TTL — pick önbelleğinin tekrar tekrar API key harcamaması için
+    await redisSet(`gen:${gen.id}`, gen, 60 * 60 * 24 * 30);
     return;
   }
   await ensureDir(GEN_DIR);

@@ -23,6 +23,7 @@ export default function PickPage() {
   const [language, setLanguage] = useState<"tr" | "en">("tr");
   const [template, setTemplate] = useState<"ats" | "visual">("ats");
   const [busy, setBusy] = useState(false);
+  const [forceRegenerate, setForceRegenerate] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -51,7 +52,12 @@ export default function PickPage() {
       const r = await fetch("/api/cv/pick", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ repo_names: Array.from(selected), language, template }),
+        body: JSON.stringify({
+          repo_names: Array.from(selected),
+          language,
+          template,
+          force: forceRegenerate,
+        }),
       });
       const j = await r.json();
       if (!r.ok) throw new Error(j.error ?? "üretim başarısız");
@@ -181,13 +187,27 @@ export default function PickPage() {
               </label>
             </div>
 
+            <label className="flex items-center gap-2 text-xs text-slate-600">
+              <input
+                type="checkbox"
+                checked={forceRegenerate}
+                onChange={(e) => setForceRegenerate(e.target.checked)}
+                className="accent-blue-600"
+              />
+              Önbelleği yok say, Claude&apos;a tekrar yazdır (API kullanır)
+            </label>
+
             <button
               onClick={submit}
               disabled={busy || selected.size === 0 || selected.size > 6}
               className="bg-blue-600 text-white px-5 py-2.5 rounded font-medium disabled:opacity-50"
             >
-              {busy ? "CV Üretiliyor (≈20 sn)…" : "Seçilen Projelerle CV Üret"}
+              {busy ? "Hazırlanıyor…" : "Seçilen Projelerle CV Üret"}
             </button>
+            <p className="text-xs text-slate-400">
+              Aynı seçim daha önce üretildiyse anında önbellekten gelir, API ücreti alınmaz (30 gün
+              boyunca).
+            </p>
             {error && <p className="text-sm text-red-700">{error}</p>}
           </div>
         </>
