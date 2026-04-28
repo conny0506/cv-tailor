@@ -65,7 +65,7 @@ export default async function Dashboard() {
               <li key={g.id} className="px-4 py-3 flex items-center justify-between">
                 <div>
                   <div className="font-medium text-slate-900">
-                    {g.analysis.role}{" "}
+                    {g.analysis?.role ?? "Manuel Seçim"}{" "}
                     <span className="text-xs text-slate-500 uppercase">
                       [{g.language}] {g.template}
                     </span>

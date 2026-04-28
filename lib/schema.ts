@@ -121,8 +121,9 @@ export const Generation = z.object({
   created_at: z.string(),
   language: z.enum(["tr", "en"]),
   template: z.enum(["ats", "visual"]),
-  job_text: z.string(),
-  analysis: JobAnalysis,
+  // undefined = manuel seçim modu (ilan yok)
+  job_text: z.string().optional(),
+  analysis: JobAnalysis.optional(),
   projects: z.array(SelectedProject),
   gaps: z.array(SkillGapItem),
   usage: TokenUsage.optional(),

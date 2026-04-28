@@ -20,7 +20,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
               CV Tailor
             </Link>
             <Link href="/generate" className="text-slate-700 hover:text-slate-900">
-              Yeni CV Üret
+              İlana Özel CV
+            </Link>
+            <Link href="/pick" className="text-slate-700 hover:text-slate-900">
+              Proje Seç
             </Link>
             <Link href="/settings" className="text-slate-700 hover:text-slate-900">
               Ayarlar

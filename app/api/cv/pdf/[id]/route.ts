@@ -14,7 +14,7 @@ export async function GET(_req: NextRequest, ctx: RouteContext<"/api/cv/pdf/[id]
   const pdf = await renderPdf(cv, gen);
 
   const slug =
-    gen.analysis.role
+    (gen.analysis?.role ?? "genel")
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-|-$/g, "")
