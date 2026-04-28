@@ -14,9 +14,13 @@ export async function renderPdf(cv: BaseCV, gen: Generation): Promise<Uint8Array
   if (process.env.VERCEL) {
     const chromium = (await import("@sparticuz/chromium")).default;
     const { default: puppeteerCore } = await import("puppeteer-core");
+    const executablePath = await chromium.executablePath();
+    if (!executablePath) {
+      throw new Error("Chromium executablePath bulunamadı (Vercel @sparticuz/chromium kurulumu eksik olabilir)");
+    }
     browser = await puppeteerCore.launch({
-      args: chromium.args,
-      executablePath: await chromium.executablePath(),
+      args: [...chromium.args, "--hide-scrollbars", "--disable-web-security"],
+      executablePath,
       headless: true,
     });
   } else {
@@ -29,7 +33,7 @@ export async function renderPdf(cv: BaseCV, gen: Generation): Promise<Uint8Array
 
   const page = await browser.newPage();
   try {
-    await page.setContent(html, { waitUntil: "networkidle0" });
+    await page.setContent(html, { waitUntil: "domcontentloaded", timeout: 30000 });
     const pdf = await page.pdf({
       format: "A4",
       printBackground: true,

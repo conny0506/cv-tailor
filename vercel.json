@@ -1,6 +1,7 @@
 {
   "functions": {
     "app/api/cv/generate/route.ts": { "maxDuration": 120 },
-    "app/api/cv/pdf/[id]/route.ts": { "maxDuration": 60 }
+    "app/api/cv/pick/route.ts": { "maxDuration": 120 },
+    "app/api/cv/pdf/[id]/route.ts": { "maxDuration": 60, "memory": 1769 }
   }
 }
