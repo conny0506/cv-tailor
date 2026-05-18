@@ -1,7 +1,8 @@
 import { NextRequest } from "next/server";
 import { createHash } from "node:crypto";
-import { readGeneration, readGithubCache, writeGeneration } from "@/lib/storage";
+import { readBaseCV, readGeneration, readGithubCache, writeGeneration } from "@/lib/storage";
 import { writeProjects } from "@/lib/projectWriter";
+import { generateTailoredContent } from "@/lib/tailoredContent";
 import { Generation } from "@/lib/schema";
 import type { UsageAccumulator } from "@/lib/claude";
 
@@ -27,9 +28,6 @@ export async function POST(req: NextRequest) {
     if (repoNames.length === 0) {
       return Response.json({ error: "En az 1 proje seçmelisiniz." }, { status: 400 });
     }
-    if (repoNames.length > 6) {
-      return Response.json({ error: "En fazla 6 proje seçebilirsiniz." }, { status: 400 });
-    }
 
     const id = pickId(repoNames, language, template);
 
@@ -41,7 +39,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const cache = await readGithubCache();
+    const [cache, cv] = await Promise.all([readGithubCache(), readBaseCV()]);
     if (!cache) {
       return Response.json(
         { error: "GitHub cache boş. Önce /settings sayfasından senkronize edin." },
@@ -62,6 +60,7 @@ export async function POST(req: NextRequest) {
     };
 
     const projects = await writeProjects({ repos: selectedRepos, targetLanguage: language, usageAccumulator: usage });
+    const tailored = await generateTailoredContent({ cv, projects, usageAccumulator: usage });
 
     const gen: Generation = {
       id,
@@ -70,6 +69,8 @@ export async function POST(req: NextRequest) {
       template,
       projects,
       gaps: [],
+      tailored_summary: tailored.summary,
+      tailored_skills: tailored.skills,
       usage,
     };
     await writeGeneration(gen);

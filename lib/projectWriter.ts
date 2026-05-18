@@ -11,25 +11,28 @@ Rules:
 4. Write in the requested output language (Turkish or English).
 5. If the README is very short, write 2-3 solid bullets rather than padding.`;
 
-const ProjectsArray = z.object({ projects: z.array(SelectedProject) });
+const ProjectsArray = z.object({ projects: z.array(SelectedProject).default([]) });
 
 export async function writeProjects(opts: {
   repos: RepoEntry[];
   targetLanguage: "tr" | "en";
   usageAccumulator?: UsageAccumulator;
 }): Promise<SelectedProject[]> {
-  const repoBlock = opts.repos
+  const repos = opts.repos.filter((r) => (r.readme ?? "").trim().length > 20);
+  if (repos.length === 0) return [];
+
+  const repoBlock = repos
     .map(
       (r) =>
         `## Repo: ${r.name}\nLanguage: ${r.language ?? "unknown"} | Stars: ${r.stargazers_count} | Topics: ${r.topics.join(", ") || "-"}\nURL: ${r.html_url}\nDescription: ${r.description ?? "-"}\n\nREADME:\n${r.readme.slice(0, 8000)}`
     )
     .join("\n\n---\n\n");
 
-  const userText = `Write resume bullets for each of the following ${opts.repos.length} project(s). Output language: ${opts.targetLanguage === "tr" ? "Turkish" : "English"}.
+  const userText = `Write resume bullets for each of the following ${repos.length} project(s). Output language: ${opts.targetLanguage === "tr" ? "Turkish" : "English"}.
 
 ${repoBlock}
 
-Return all ${opts.repos.length} project(s) via the tool call.`;
+Return all ${repos.length} project(s) via the tool call.`;
 
   const result = await structuredCall({
     system: SYSTEM,

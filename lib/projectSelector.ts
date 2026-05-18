@@ -2,7 +2,7 @@ import { structuredCall, UsageAccumulator } from "./claude";
 import { GithubCache, JobAnalysis, SelectedProject } from "./schema";
 import { z } from "zod";
 
-const SYSTEM_HEAD = `You are an expert technical resume writer. From a candidate's GitHub portfolio, you select the 3-5 projects most relevant to a target job posting and rewrite each project's bullets to highlight matching keywords — TRUTHFULLY.
+const SYSTEM_HEAD = `You are an expert technical resume writer. From a candidate's GitHub portfolio, you select the 3-8 projects most relevant to a target job posting and rewrite each project's bullets to highlight matching keywords — TRUTHFULLY.
 
 Hard rules:
 1. NEVER attribute a technology, library, or feature to a project unless it appears in that project's README.
@@ -10,7 +10,8 @@ Hard rules:
 3. Write bullets in the requested target language (TR or EN).
 4. Each bullet should be 1-2 lines, action-verb led, quantified when possible.
 5. If fewer than 3 projects in the portfolio truly match, return only those that match — do NOT pad.
-6. Order projects by relevance (most relevant first).`;
+6. Order projects by relevance (most relevant first).
+7. Prefer breadth of skills over depth when the portfolio is large — include projects that showcase different technologies.`;
 
 function buildReadmeBlock(cache: GithubCache): string {
   return cache.repos
@@ -50,7 +51,7 @@ export async function selectProjects(opts: {
 
 Target language for output: ${opts.targetLanguage === "tr" ? "Turkish" : "English"}.
 
-Select 3-5 most relevant projects from the portfolio above. Return them via the tool call.`;
+Select 3-8 most relevant projects from the portfolio above. Prefer variety — include projects that demonstrate different parts of the required skill set. Return them via the tool call.`;
 
   const result = await structuredCall({
     system: systemBlocks,
@@ -64,7 +65,7 @@ Select 3-5 most relevant projects from the portfolio above. Return them via the 
         projects: {
           type: "array",
           minItems: 0,
-          maxItems: 5,
+          maxItems: 8,
           items: {
             type: "object",
             properties: {

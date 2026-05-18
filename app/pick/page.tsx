@@ -77,8 +77,8 @@ export default function PickPage() {
       <section>
         <h1 className="text-2xl font-bold mb-1">Proje Seç — CV Üret</h1>
         <p className="text-slate-600 text-sm">
-          Hangi projelerinin CV&apos;de yer alacağını seç (en fazla 6). İş ilanı gerekmez; Claude her
-          proje için özgeçmiş bullet&apos;ları otomatik yazar.
+          Hangi projelerinin CV&apos;de yer alacağını seç. İş ilanı gerekmez; Claude havuzdan en uygun
+          8 projeyi seçerek her biri için özgeçmiş bullet&apos;larını otomatik yazar.
         </p>
       </section>
 
@@ -156,9 +156,9 @@ export default function PickPage() {
 
           <div className="bg-white border border-slate-200 rounded p-5 space-y-4">
             <p className="text-sm text-slate-600">
-              <span className="font-semibold text-slate-900">{selected.size}</span> / 6 proje seçildi
-              {selected.size > 6 && (
-                <span className="text-red-600 ml-2">— en fazla 6 seçebilirsiniz</span>
+              <span className="font-semibold text-slate-900">{selected.size}</span> proje seçildi
+              {selected.size > 0 && (
+                <span className="text-slate-400 ml-2">— Claude en uygun 8&apos;ini alacak</span>
               )}
             </p>
 
@@ -199,7 +199,7 @@ export default function PickPage() {
 
             <button
               onClick={submit}
-              disabled={busy || selected.size === 0 || selected.size > 6}
+              disabled={busy || selected.size === 0}
               className="bg-blue-600 text-white px-5 py-2.5 rounded font-medium disabled:opacity-50"
             >
               {busy ? "Hazırlanıyor…" : "Seçilen Projelerle CV Üret"}

@@ -126,6 +126,8 @@ export const Generation = z.object({
   analysis: JobAnalysis.optional(),
   projects: z.array(SelectedProject),
   gaps: z.array(SkillGapItem),
+  tailored_summary: Bilingual.optional(),
+  tailored_skills: z.array(SkillCategory).optional(),
   usage: TokenUsage.optional(),
 });
 export type Generation = z.infer<typeof Generation>;

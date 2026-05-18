@@ -4,6 +4,7 @@ import { readBaseCV, readGithubCache, writeGeneration } from "@/lib/storage";
 import { analyzeJob } from "@/lib/jobAnalyzer";
 import { selectProjects } from "@/lib/projectSelector";
 import { findGaps } from "@/lib/skillGap";
+import { generateTailoredContent } from "@/lib/tailoredContent";
 import { Generation } from "@/lib/schema";
 import type { UsageAccumulator } from "@/lib/claude";
 
@@ -40,7 +41,10 @@ export async function POST(req: NextRequest) {
 
     const analysis = await analyzeJob(jobText, usage);
     const projects = await selectProjects({ cache, analysis, targetLanguage: language, usageAccumulator: usage });
-    const gaps = await findGaps({ cv, cache, analysis, selected: projects, usageAccumulator: usage });
+    const [gaps, tailored] = await Promise.all([
+      findGaps({ cv, cache, analysis, selected: projects, usageAccumulator: usage }),
+      generateTailoredContent({ cv, projects, usageAccumulator: usage }),
+    ]);
 
     const gen: Generation = {
       id: randomUUID(),
@@ -51,6 +55,8 @@ export async function POST(req: NextRequest) {
       analysis,
       projects,
       gaps,
+      tailored_summary: tailored.summary,
+      tailored_skills: tailored.skills,
       usage,
     };
     await writeGeneration(gen);

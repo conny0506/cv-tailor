@@ -60,7 +60,8 @@ export function renderVisual({ cv, gen }: RenderInput): string {
     )
     .join("");
 
-  const skillsHtml = cv.skills
+  const skillsSource = gen.tailored_skills ?? cv.skills;
+  const skillsHtml = skillsSource
     .map(
       (s) =>
         `<div class="skill-row">
@@ -122,7 +123,7 @@ export function renderVisual({ cv, gen }: RenderInput): string {
   </div>
 
   <h2>${escape(L.summary)}</h2>
-  <p>${escape(pick(cv.summary, lang))}</p>
+  <p>${escape(pick(gen.tailored_summary ?? cv.summary, lang))}</p>
 
   <h2>${escape(L.education)}</h2>${eduHtml}
 
